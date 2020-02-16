@@ -1,6 +1,8 @@
 package com.dndn.sbase.sys.service;
 
 import com.dndn.sbase.sys.domain.Auth;
+import com.dndn.sbase.sys.domain.Role;
+import com.dndn.sbase.sys.domain.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,7 +25,9 @@ public class AuthDetailsImp implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority(this.user.getRoleName()));
+        for (UserRole role : this.user.getRoles()) {
+            authorities.add(new SimpleGrantedAuthority(role.getRole().getRoleName()));
+        }
         return authorities;
     }
 

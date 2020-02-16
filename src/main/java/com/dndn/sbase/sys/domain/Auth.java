@@ -2,6 +2,9 @@ package com.dndn.sbase.sys.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import java.util.List;
 
 @Entity
 public class Auth extends BaseModel{
@@ -16,19 +19,20 @@ public class Auth extends BaseModel{
 
     private boolean isEnabled;
 
-    private String roleName;
+    @OneToMany(mappedBy = "auth")
+    private List<UserRole> roles;
 
     public Auth() {
         super();
     }
 
-    public Auth(String username, String password, String email, boolean isEnabled, String roleName) {
+    public Auth(String username, String password, String email, boolean isEnabled, List<UserRole> roles) {
         super();
         this.username = username;
         this.password = password;
         this.email = email;
         this.isEnabled = isEnabled;
-        this.roleName = roleName;
+        this.roles = roles;
     }
 
     public String getUsername() {
@@ -63,11 +67,11 @@ public class Auth extends BaseModel{
         isEnabled = enabled;
     }
 
-    public String getRoleName() {
-        return roleName;
+    public List<UserRole> getRoles() {
+        return roles;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setRoles(List<UserRole> roles) {
+        this.roles = roles;
     }
 }
