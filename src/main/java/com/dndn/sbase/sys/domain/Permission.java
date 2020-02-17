@@ -8,6 +8,8 @@ public class Permission extends BaseModel {
 
     private String permissionName;
 
+    private String description;
+
     @OneToMany(mappedBy = "permission")
     private List<RolePermission> role;
 
@@ -15,9 +17,16 @@ public class Permission extends BaseModel {
         super();
     }
 
-    public Permission(String permissionName, List<RolePermission> role) {
+    public Permission(String permissionName, String description) {
         super();
         this.permissionName = permissionName;
+        this.description = description;
+    }
+
+    public Permission(String permissionName, List<RolePermission> role, String description) {
+        super();
+        this.permissionName = permissionName;
+        this.description = description;
         this.role = role;
     }
 
@@ -35,5 +44,13 @@ public class Permission extends BaseModel {
 
     public void setRole(List<RolePermission> role) {
         this.role = role;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
