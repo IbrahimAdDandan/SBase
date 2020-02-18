@@ -1,13 +1,10 @@
 package com.dndn.sbase.sys.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
-public class Auth extends BaseModel{
+public class User extends BaseModel{
 
     @Column( unique = true, nullable = false)
     private String username;
@@ -19,14 +16,20 @@ public class Auth extends BaseModel{
 
     private boolean isEnabled;
 
-    @OneToMany(mappedBy = "auth")
-    private List<UserRole> roles;
+    @ManyToMany
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"))
+    private List<Role> roles;
 
-    public Auth() {
+    public User() {
         super();
     }
 
-    public Auth(String username, String password, String email, boolean isEnabled, List<UserRole> roles) {
+    public User(String username, String password, String email, boolean isEnabled, List<Role> roles) {
         super();
         this.username = username;
         this.password = password;
@@ -67,11 +70,11 @@ public class Auth extends BaseModel{
         isEnabled = enabled;
     }
 
-    public List<UserRole> getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<UserRole> roles) {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
 }

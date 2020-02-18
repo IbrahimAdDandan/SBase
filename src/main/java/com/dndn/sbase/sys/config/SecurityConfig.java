@@ -8,19 +8,23 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
     @Autowired
     private AuthService authService;
 
     @Autowired
     public void configAuth(AuthenticationManagerBuilder auth) throws Exception {
+//        System.out.println(" the encrypted passowrd bla bla: " + (new BCryptPasswordEncoder()).encode("admin"));
         auth
                 .userDetailsService(authService)
-                .passwordEncoder(new BCryptPasswordEncoder());
+                .passwordEncoder(NoOpPasswordEncoder.getInstance());
+//                .and()
+//                .inMemoryAuthentication()
+//                .withUser("admin")
+//                .password("admin");
     }
 
 //    @Override

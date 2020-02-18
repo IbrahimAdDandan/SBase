@@ -1,48 +1,100 @@
 package com.dndn.sbase.sys.service;
 
-import com.dndn.sbase.sys.domain.Auth;
-import com.dndn.sbase.sys.repository.AuthRepository;
+import com.dndn.sbase.sys.domain.Privilege;
+import com.dndn.sbase.sys.domain.Role;
+import com.dndn.sbase.sys.domain.User;
+import com.dndn.sbase.sys.repository.RoleRepository;
+import com.dndn.sbase.sys.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import javax.transaction.Transactional;
+import java.util.*;
 
-@Service
+@Service("userDetailsService")
+@Transactional
 public class AuthService implements UserDetailsService {
 
     @Autowired
-    AuthRepository authRepository;
+    private UserRepository userRepository;
+
+//    @Autowired
+//    private IUserService service;
+
+//    @Autowired
+//    private MessageSource messages;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Auth user = authRepository.findByUsername(username);
-        if (user == null) throw new UsernameNotFoundException("User not found");
-        return new AuthDetailsImp(user);
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
+
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return new org.springframework.security.core.userdetails.User(
+                    " ", "{noop} ", true, true, true, true,
+                    getAuthorities(Arrays.asList(
+                            roleRepository.findByRoleName("ROLE_USER"))));
+        }
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(), user.getPassword(), user.isEnabled(), true, true,
+                true, getAuthorities(user.getRoles()));
     }
 
-    public List<Auth> getUsers() { return (List<Auth>) authRepository.findAll();}
+    private Collection<? extends GrantedAuthority> getAuthorities(
+            Collection<Role> roles) {
 
-    public Auth get() {
-        return new Auth();
+        return getGrantedAuthorities(getPrivileges(roles));
     }
 
-    public Optional<Auth> getUserById(Long id) {
-        return authRepository.findById(id);
+    private List<String> getPrivileges(Collection<Role> roles) {
+
+        List<String> privileges = new ArrayList<>();
+        List<Privilege> collection = new ArrayList<>();
+        for (Role role : roles) {
+            collection.addAll(role.getPrivileges());
+        }
+        for (Privilege item : collection) {
+            privileges.add(item.getName());
+        }
+        return privileges;
     }
 
-    public Auth getAuthByUsername(String username) {
-        return authRepository.findByUsername(username);
+    private List<GrantedAuthority> getGrantedAuthorities(List<String> privileges) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        for (String privilege : privileges) {
+            authorities.add(new SimpleGrantedAuthority(privilege));
+        }
+        return authorities;
+    }
+
+    public List<User> getUsers() { return (List<User>) userRepository.findAll();}
+
+    public User get() {
+        return new User();
+    }
+
+    public Optional<User> getUserById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    public User getAuthByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     public void remove(Long id) {
-        authRepository.deleteById(id);
+        userRepository.deleteById(id);
     }
 
-    public Auth add(Auth user) {
-        return authRepository.save(user);
+    public User add(User user) {
+        return userRepository.save(user);
     }
 }

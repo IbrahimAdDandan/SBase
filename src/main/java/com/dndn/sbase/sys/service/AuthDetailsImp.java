@@ -1,32 +1,37 @@
 package com.dndn.sbase.sys.service;
 
-import com.dndn.sbase.sys.domain.Auth;
+import com.dndn.sbase.sys.domain.Privilege;
 import com.dndn.sbase.sys.domain.Role;
-import com.dndn.sbase.sys.domain.UserRole;
+import com.dndn.sbase.sys.domain.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.HashSet;
 
 public class AuthDetailsImp implements UserDetails {
 
 
-    private Auth user;
+    private User user;
 
     public AuthDetailsImp() {
     }
 
-    public AuthDetailsImp(Auth user) {
+    public AuthDetailsImp(User user) {
         this.user = user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new HashSet<>();
-        for (UserRole role : this.user.getRoles()) {
-            authorities.add(new SimpleGrantedAuthority(role.getRole().getRoleName()));
+        for (Role role: this.user.getRoles()) {
+            for (Privilege privilege : role.getPrivileges()) {
+                authorities.add(new SimpleGrantedAuthority(privilege.getName()));
+            }
         }
         return authorities;
     }
@@ -43,17 +48,17 @@ public class AuthDetailsImp implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override

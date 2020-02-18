@@ -1,7 +1,6 @@
 package com.dndn.sbase.sys.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -9,20 +8,31 @@ public class Role extends BaseModel {
 
     private String roleName;
 
-    @OneToMany( mappedBy = "role")
-    List<RolePermission> permissions;
+    @ManyToMany
+    @JoinTable(
+            name = "roles_privileges",
+            joinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "privilege_id", referencedColumnName = "id"))
+    List<Privilege> privileges;
 
-    @OneToMany(mappedBy = "role")
-    List<UserRole> users;
+    @ManyToMany(mappedBy = "roles")
+    private List<User> users;
 
     public Role() {
         super();
     }
 
-    public Role(String roleName, List<RolePermission> permissions, List<UserRole> users) {
+    public Role(String roleName) {
         super();
         this.roleName = roleName;
-        this.permissions = permissions;
+    }
+
+    public Role(String roleName, List<Privilege> privileges, List<User> users) {
+        super();
+        this.roleName = roleName;
+        this.privileges = privileges;
         this.users = users;
     }
 
@@ -34,19 +44,19 @@ public class Role extends BaseModel {
         this.roleName = roleName;
     }
 
-    public List<RolePermission> getPermissions() {
-        return permissions;
+    public List<Privilege> getPrivileges() {
+        return privileges;
     }
 
-    public void setPermissions(List<RolePermission> permissions) {
-        this.permissions = permissions;
+    public void setPrivileges(List<Privilege> privileges) {
+        this.privileges = privileges;
     }
 
-    public List<UserRole> getUsers() {
+    public List<User> getUsers() {
         return users;
     }
 
-    public void setUsers(List<UserRole> users) {
+    public void setUsers(List<User> users) {
         this.users = users;
     }
 }

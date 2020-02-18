@@ -28,7 +28,6 @@ public class GenericService<Type extends BaseModel> {
     public Type getOne(Long id) {
         return (Type) genericRepository.findById(id).get();
     }
-
     public void delete(BaseModel type) {
         type.setDeleted(true);
         genericRepository.save(type);

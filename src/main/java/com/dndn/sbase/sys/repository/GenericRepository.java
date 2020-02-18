@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface GenericRepository extends CrudRepository<BaseModel, Long> {
+public interface GenericRepository<Type extends BaseModel> extends CrudRepository<BaseModel, Long> {
 
-    public List<BaseModel> findByIsDeleted(boolean isDeleted);
+    public List<Type> findByIsDeleted(boolean isDeleted);
 }
