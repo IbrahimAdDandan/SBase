@@ -3,13 +3,9 @@ package com.dndn.sbase.sys.service;
 import com.dndn.sbase.sys.domain.Privilege;
 import com.dndn.sbase.sys.domain.Role;
 import com.dndn.sbase.sys.domain.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.HashSet;
 

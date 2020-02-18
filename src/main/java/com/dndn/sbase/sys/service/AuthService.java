@@ -20,9 +20,6 @@ import java.util.*;
 @Transactional
 public class AuthService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
-
 //    @Autowired
 //    private IUserService service;
 
@@ -30,7 +27,10 @@ public class AuthService implements UserDetailsService {
 //    private MessageSource messages;
 
     @Autowired
-    private RoleRepository roleRepository;
+    RoleRepository roleRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username)

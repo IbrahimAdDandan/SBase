@@ -9,8 +9,6 @@ import com.dndn.sbase.sys.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -48,19 +46,24 @@ public class InitialDataLoader
                 readPrivilege, writePrivilege);
         createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
         createRoleIfNotFound("ROLE_USER", Arrays.asList(readPrivilege));
-
-        Role adminRole = roleRepository.findByRoleName("ROLE_ADMIN");
-        User user = new User();
-        user.setUsername("admin");
-        user.setPassword("{noop}admin");
-        user.setEmail("test@test.com");
-        user.setRoles(Arrays.asList(adminRole));
-        user.setEnabled(true);
-        userRepository.save(user);
-
-//        org.springframework.security.core.userdetails.User.UserBuilder users =
-//                org.springframework.security.core.userdetails.User.withDefaultPasswordEncoder();
+        createAdminIfNotFound();
         alreadySetup = true;
+    }
+
+    @Transactional
+    User createAdminIfNotFound() {
+        User u = userRepository.findByEmail("test@test.com");
+        if (u == null) {
+            Role adminRole = roleRepository.findByRoleName("ROLE_ADMIN");
+            User user = new User();
+            user.setUsername("admin");
+            user.setPassword("{noop}admin");
+            user.setEmail("test@test.com");
+            user.setRoles(Arrays.asList(adminRole));
+            user.setEnabled(true);
+            userRepository.save(user);
+        }
+        return u;
     }
 
     @Transactional

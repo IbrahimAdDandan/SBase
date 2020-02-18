@@ -5,6 +5,6 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class PermissionService extends GenericService<Privilege>{
+public class PrivilegeService extends GenericService<Privilege>{
 
 }

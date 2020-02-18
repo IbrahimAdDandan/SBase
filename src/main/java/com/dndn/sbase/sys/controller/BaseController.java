@@ -1,25 +1,29 @@
 package com.dndn.sbase.sys.controller;
 
-import com.dndn.sbase.sys.service.PermissionService;
+import com.dndn.sbase.sys.domain.Privilege;
+import com.dndn.sbase.sys.service.PrivilegeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.RepositoryRestController;
+import org.springframework.web.bind.annotation.RestController;
 
-@RepositoryRestController
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
 public class BaseController {
 
 
-    private PermissionService permissionService;
+    private PrivilegeService privilegeService;
 
     @Autowired
-    public BaseController(PermissionService permissionService) {
-        this.permissionService = permissionService;
+    public BaseController(PrivilegeService privilegeService) {
+        this.privilegeService = privilegeService;
         String controllerName = this.getClass().getSimpleName();
-//        List<Privilege> defaultPermissions = new ArrayList<>();
-//        defaultPermissions.add(new Privilege("GET_"+controllerName, "Get All or one "+controllerName));
-//        defaultPermissions.add(new Privilege("ADD_"+controllerName, "Add "+controllerName));
-//        defaultPermissions.add(new Privilege("UPDATE_"+controllerName, "Update"+controllerName));
-//        defaultPermissions.add(new Privilege("DELETE_"+controllerName, "Delete "+controllerName));
-//        System.out.println(defaultPermissions);
-//        permissionService.saveAll(defaultPermissions);
+        List<Privilege> defaultPermissions = new ArrayList<>();
+        defaultPermissions.add(new Privilege("GET_"+controllerName, "Get All or one "+controllerName));
+        defaultPermissions.add(new Privilege("ADD_"+controllerName, "Add "+controllerName));
+        defaultPermissions.add(new Privilege("UPDATE_"+controllerName, "Update"+controllerName));
+        defaultPermissions.add(new Privilege("DELETE_"+controllerName, "Delete "+controllerName));
+
+        privilegeService.saveAll(defaultPermissions);
     }
 }
