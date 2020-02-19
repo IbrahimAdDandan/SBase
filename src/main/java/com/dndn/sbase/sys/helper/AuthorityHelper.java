@@ -21,10 +21,10 @@ public class AuthorityHelper {
 
     /**
      *
-     * @param user
-     * @param className
-     * @param operationType
-     * @return
+     * @param user {@link String}
+     * @param className {@link String}
+     * @param operationType {@link OperationType}
+     * @return boolean
      */
     public static boolean hasAuthority(UserDetails user, String className, OperationType operationType) {
         List<GrantedAuthority> authorities = new ArrayList<>();
