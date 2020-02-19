@@ -26,7 +26,7 @@ public class AuthDetailsImp implements UserDetails {
         Collection<GrantedAuthority> authorities = new HashSet<>();
         for (Role role: this.user.getRoles()) {
             for (Privilege privilege : role.getPrivileges()) {
-                authorities.add(new SimpleGrantedAuthority(privilege.getName()));
+                authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
             }
         }
         return authorities;

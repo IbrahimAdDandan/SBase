@@ -38,10 +38,11 @@ public class AuthService implements UserDetailsService {
 
         User user = userRepository.findByUsername(username);
         if (user == null) {
-            return new org.springframework.security.core.userdetails.User(
-                    " ", "{noop} ", true, true, true, true,
-                    getAuthorities(Arrays.asList(
-                            roleRepository.findByRoleName("ROLE_USER"))));
+//            return new org.springframework.security.core.userdetails.User(
+//                    " ", "{noop} ", true, true, true, true,
+//                    getAuthorities(Arrays.asList(
+//                            roleRepository.findByRoleName("ROLE_USER"))));
+            throw new UsernameNotFoundException("user not found");
         }
 
         return new org.springframework.security.core.userdetails.User(

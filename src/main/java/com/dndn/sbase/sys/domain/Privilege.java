@@ -6,6 +6,7 @@ import java.util.List;
 @Entity
 public class Privilege extends BaseModel {
 
+    @Column( unique = true, nullable = false)
     private String name;
 
     private String description;

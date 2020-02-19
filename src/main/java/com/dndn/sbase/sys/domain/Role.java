@@ -6,6 +6,7 @@ import java.util.List;
 @Entity
 public class Role extends BaseModel {
 
+    @Column( unique = true, nullable = false)
     private String roleName;
 
     @ManyToMany

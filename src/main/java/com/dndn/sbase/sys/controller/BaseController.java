@@ -1,14 +1,22 @@
 package com.dndn.sbase.sys.controller;
 
 import com.dndn.sbase.sys.domain.Privilege;
+import com.dndn.sbase.sys.helper.AuthorityHelper;
 import com.dndn.sbase.sys.service.PrivilegeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.rest.webmvc.RepositoryRestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
+@RepositoryRestController
+@RequestMapping("baseModels")
 public class BaseController {
 
 
@@ -25,5 +33,20 @@ public class BaseController {
         defaultPermissions.add(new Privilege("DELETE_"+controllerName, "Delete "+controllerName));
 
         privilegeService.saveAll(defaultPermissions);
+
+    }
+
+    @RequestMapping("/forTest")
+    @ResponseBody
+    public ResponseEntity<?> forTest(Authentication authentication) {
+
+        UserDetails user = (UserDetails)authentication.getPrincipal();
+//        List<GrantedAuthority> authorities = new ArrayList<>();
+//        authorities.addAll(authentication.getAuthorities());
+//        if (AuthorityHelper.hasAuthority(authorities, "WRITE_PRIVILEGE")) {
+        if (AuthorityHelper.hasAuthority(user, "WRITE_PRIVILEGE")) {
+            return new ResponseEntity<>(" the user has write privilege bla bla", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("NoOoOp", HttpStatus.OK);
     }
 }
