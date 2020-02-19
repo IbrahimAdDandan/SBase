@@ -16,7 +16,7 @@ public class AuthorityHelper {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.addAll(user.getAuthorities());
         GrantedAuthority authority = new SimpleGrantedAuthority(privilege);
-        return authorities.contains(authority);
+        return (authorities.contains(new SimpleGrantedAuthority("ADMIN")) || authorities.contains(authority));
     }
 
     /**
@@ -31,13 +31,13 @@ public class AuthorityHelper {
         authorities.addAll(user.getAuthorities());
         String privilege = operationType.name() + "_" + className;
         GrantedAuthority authority = new SimpleGrantedAuthority(privilege);
-        return authorities.contains(authority);
+        return (authorities.contains(new SimpleGrantedAuthority("ADMIN")) || authorities.contains(authority));
     }
 
     public static boolean hasAuthority(List<GrantedAuthority> authorities, String privilege) {
 
         GrantedAuthority authority = new SimpleGrantedAuthority(privilege);
-        return authorities.contains(authority);
+        return (authorities.contains(new SimpleGrantedAuthority("ADMIN")) || authorities.contains(authority));
     }
 
 }

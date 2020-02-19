@@ -37,15 +37,12 @@ public class InitialDataLoader
 
         if (alreadySetup)
             return;
-        Privilege readPrivilege
-                = createPrivilegeIfNotFound("READ_PRIVILEGE", "Can Read anything");
-        Privilege writePrivilege
-                = createPrivilegeIfNotFound("WRITE_PRIVILEGE", "Can write anything");
+        Privilege adminPrivilege = createPrivilegeIfNotFound("ADMIN", "Can Do anything");
+//        Privilege writePrivilege = createPrivilegeIfNotFound("WRITE_PRIVILEGE", "Can write anything");
 
-        List<Privilege> adminPrivileges = Arrays.asList(
-                readPrivilege, writePrivilege);
+        List<Privilege> adminPrivileges = Arrays.asList(adminPrivilege);
         createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-        createRoleIfNotFound("ROLE_USER", Arrays.asList(readPrivilege));
+//        createRoleIfNotFound("ROLE_USER", Arrays.asList(adminPrivilege));
         createAdminIfNotFound();
         alreadySetup = true;
     }
