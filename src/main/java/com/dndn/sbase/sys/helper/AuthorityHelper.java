@@ -1,5 +1,6 @@
 package com.dndn.sbase.sys.helper;
 
+import com.dndn.sbase.sys.type.OperationType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +15,21 @@ public class AuthorityHelper {
     public static boolean hasAuthority(UserDetails user, String privilege) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.addAll(user.getAuthorities());
+        GrantedAuthority authority = new SimpleGrantedAuthority(privilege);
+        return authorities.contains(authority);
+    }
+
+    /**
+     *
+     * @param user
+     * @param className
+     * @param operationType
+     * @return
+     */
+    public static boolean hasAuthority(UserDetails user, String className, OperationType operationType) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.addAll(user.getAuthorities());
+        String privilege = operationType.name() + "_" + className;
         GrantedAuthority authority = new SimpleGrantedAuthority(privilege);
         return authorities.contains(authority);
     }

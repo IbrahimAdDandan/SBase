@@ -3,6 +3,7 @@ package com.dndn.sbase.sys.controller;
 import com.dndn.sbase.sys.domain.Privilege;
 import com.dndn.sbase.sys.helper.AuthorityHelper;
 import com.dndn.sbase.sys.service.PrivilegeService;
+import com.dndn.sbase.sys.type.OperationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class BaseController {
         List<Privilege> defaultPermissions = new ArrayList<>();
         defaultPermissions.add(new Privilege("GET_"+controllerName, "Get All or one "+controllerName));
         defaultPermissions.add(new Privilege("ADD_"+controllerName, "Add "+controllerName));
-        defaultPermissions.add(new Privilege("UPDATE_"+controllerName, "Update"+controllerName));
+        defaultPermissions.add(new Privilege("UPDATE_"+controllerName, "Update "+controllerName));
         defaultPermissions.add(new Privilege("DELETE_"+controllerName, "Delete "+controllerName));
 
         privilegeService.saveAll(defaultPermissions);
@@ -44,7 +45,7 @@ public class BaseController {
 //        List<GrantedAuthority> authorities = new ArrayList<>();
 //        authorities.addAll(authentication.getAuthorities());
 //        if (AuthorityHelper.hasAuthority(authorities, "WRITE_PRIVILEGE")) {
-        if (AuthorityHelper.hasAuthority(user, "WRITE_PRIVILEGE")) {
+        if (AuthorityHelper.hasAuthority(user, this.getClass().getSimpleName(), OperationType.GET)) {
             return new ResponseEntity<>(" the user has write privilege bla bla", HttpStatus.OK);
         }
         return new ResponseEntity<>("NoOoOp", HttpStatus.OK);
