@@ -11,7 +11,7 @@ import java.util.List;
 public class GenericService<Type extends BaseModel> {
 
     @Autowired
-    private GenericRepository genericRepository;
+    private GenericRepository<Type> genericRepository;
 
     public GenericRepository getGenericRepository() {
         return genericRepository;
