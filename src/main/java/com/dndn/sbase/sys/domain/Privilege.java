@@ -1,5 +1,7 @@
 package com.dndn.sbase.sys.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -11,7 +13,8 @@ public class Privilege extends BaseModel {
 
     private String description;
 
-    @ManyToMany(mappedBy = "privileges")
+    @ManyToMany(mappedBy = "privileges", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Role> roles;
 
     public Privilege() {

@@ -44,7 +44,7 @@ GenericService contains the methods:
 
 ```java
 @RestController
-@RequestMapping("uri")
+@RequestMapping("path")
 public class MyController extends BaseController {
     PrivilegeService privilegeService;
 

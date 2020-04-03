@@ -1,10 +1,13 @@
 package com.dndn.sbase.sys.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 public class User extends BaseModel{
+
 
     @Column( unique = true, nullable = false)
     private String username;
@@ -17,13 +20,14 @@ public class User extends BaseModel{
 
     private boolean isEnabled;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(
                     name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(
                     name = "role_id", referencedColumnName = "id"))
+    @JsonIgnore
     private List<Role> roles;
 
     public User() {
@@ -38,6 +42,8 @@ public class User extends BaseModel{
         this.isEnabled = isEnabled;
         this.roles = roles;
     }
+
+    public Long getId() { return super.getId(); }
 
     public String getUsername() {
         return username;

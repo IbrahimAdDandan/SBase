@@ -1,23 +1,25 @@
 package com.dndn.sbase.sys.controller;
 
 
+import com.dndn.sbase.sys.domain.BaseModel;
 import com.dndn.sbase.sys.domain.Privilege;
 import com.dndn.sbase.sys.helper.AuthorityHelper;
+import com.dndn.sbase.sys.service.GenericService;
 import com.dndn.sbase.sys.service.PrivilegeService;
 import com.dndn.sbase.sys.type.OperationType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BaseController {
+public abstract class BaseController< T extends BaseModel, S extends GenericService> {
 
-    public BaseController(PrivilegeService privilegeService) {
+    S genericService;
+
+    public BaseController(PrivilegeService privilegeService, S genericService) {
         String getPrivilege = OperationType.GET.name() + "_" + this.getClass().getSimpleName();
         String postPrivilege = OperationType.ADD.name() + "_" + this.getClass().getSimpleName();
         String updatePrivilege = OperationType.UPDATE.name() + "_" + this.getClass().getSimpleName();
@@ -26,31 +28,77 @@ public class BaseController {
         List<Privilege> privileges = new ArrayList<>();
 
         if (privilegeService.getBYName(getPrivilege) == null)
-            privileges.add(new Privilege(getPrivilege,"Get one or all"));
+            privileges.add(new Privilege(getPrivilege, "Get one or all"));
 
         if (privilegeService.getBYName(getPrivilege) == null)
-            privileges.add(new Privilege(postPrivilege,"Insert Privilege"));
+            privileges.add(new Privilege(postPrivilege, "Insert Privilege"));
 
         if (privilegeService.getBYName(getPrivilege) == null)
-            privileges.add(new Privilege(updatePrivilege,"Update Privilege"));
+            privileges.add(new Privilege(updatePrivilege, "Update Privilege"));
 
         if (privilegeService.getBYName(getPrivilege) == null)
-            privileges.add(new Privilege(deletePrivilege,"Delete Privilege"));
+            privileges.add(new Privilege(deletePrivilege, "Delete Privilege"));
 
         privilegeService.saveAll(privileges);
+
+        this.genericService = genericService;
     }
 
-//    @RequestMapping("/forTest")
-//    @ResponseBody
-//    public ResponseEntity<?> forTest(Authentication authentication) {
-//
-//        UserDetails user = (UserDetails)authentication.getPrincipal();
-////        List<GrantedAuthority> authorities = new ArrayList<>();
-////        authorities.addAll(authentication.getAuthorities());
-////        if (AuthorityHelper.hasAuthority(authorities, "WRITE_PRIVILEGE")) {
-//        if (AuthorityHelper.hasAuthority(user, this.getClass().getSimpleName(), OperationType.GET)) {
-//            return new ResponseEntity<>(" the user has write privilege bla bla", HttpStatus.OK);
-//        }
-//        return new ResponseEntity<>("NoOoOp", HttpStatus.OK);
-//    }
+    @GetMapping("")
+    public ResponseEntity<?> getAll(Authentication authentication) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!AuthorityHelper.hasAuthority(authentication.getAuthorities(), this.getClass().getSimpleName(), OperationType.GET))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        try {
+            return new ResponseEntity<>(genericService.getAll(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getOne(@PathVariable("id") Long id, Authentication authentication) {
+        if (!AuthorityHelper.hasAuthority(authentication.getAuthorities(), this.getClass().getSimpleName(), OperationType.GET))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        try {
+            return new ResponseEntity<>(genericService.getOne(id), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("")
+    public ResponseEntity<?> add(@RequestBody T input, Authentication authentication) {
+        if (!AuthorityHelper.hasAuthority(authentication.getAuthorities(), this.getClass().getSimpleName(), OperationType.ADD))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        try {
+            return new ResponseEntity<>(genericService.save(input), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @PutMapping("")
+    public ResponseEntity<?> update(@RequestBody T input, Authentication authentication) {
+        if (!AuthorityHelper.hasAuthority(authentication.getAuthorities(), this.getClass().getSimpleName(), OperationType.UPDATE))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        try {
+            return new ResponseEntity<>(genericService.save(input), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") Long id, Authentication authentication) {
+        if (!AuthorityHelper.hasAuthority(authentication.getAuthorities(), this.getClass().getSimpleName(), OperationType.DELETE))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        try {
+            genericService.delete(genericService.getOne(id));
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

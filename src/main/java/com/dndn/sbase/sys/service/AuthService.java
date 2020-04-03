@@ -19,16 +19,6 @@ import java.util.*;
 @Service("userDetailsService")
 @Transactional
 public class AuthService implements UserDetailsService {
-
-//    @Autowired
-//    private IUserService service;
-
-//    @Autowired
-//    private MessageSource messages;
-
-    @Autowired
-    RoleRepository roleRepository;
-
     @Autowired
     UserRepository userRepository;
 
@@ -50,8 +40,7 @@ public class AuthService implements UserDetailsService {
                 true, getAuthorities(user.getRoles()));
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(
-            Collection<Role> roles) {
+    private Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {
 
         return getGrantedAuthorities(getPrivileges(roles));
     }
@@ -77,25 +66,4 @@ public class AuthService implements UserDetailsService {
         return authorities;
     }
 
-    public List<User> getUsers() { return (List<User>) userRepository.findAll();}
-
-    public User get() {
-        return new User();
-    }
-
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
-    }
-
-    public User getAuthByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    public void remove(Long id) {
-        userRepository.deleteById(id);
-    }
-
-    public User add(User user) {
-        return userRepository.save(user);
-    }
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -31,24 +32,30 @@ public class InitialDataLoader
     @Autowired
     private PrivilegeRepository privilegeRepository;
 
+    public InitialDataLoader(UserRepository userRepository, RoleRepository roleRepository, PrivilegeRepository privilegeRepository) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.privilegeRepository = privilegeRepository;
+    }
+
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
 
         if (alreadySetup)
             return;
-        Privilege adminPrivilege = createPrivilegeIfNotFound("ADMIN", "Can Do anything");
+        Privilege adminPrivilege = createPrivilegeIfNotFound();
 //        Privilege writePrivilege = createPrivilegeIfNotFound("WRITE_PRIVILEGE", "Can write anything");
 
-        List<Privilege> adminPrivileges = Arrays.asList(adminPrivilege);
-        createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
+        List<Privilege> adminPrivileges = Collections.singletonList(adminPrivilege);
+        createRoleIfNotFound(adminPrivileges);
 //        createRoleIfNotFound("ROLE_USER", Arrays.asList(adminPrivilege));
         createAdminIfNotFound();
         alreadySetup = true;
     }
 
     @Transactional
-    User createAdminIfNotFound() {
+    void createAdminIfNotFound() {
         User u = userRepository.findByEmail("test@test.com");
         if (u == null) {
             Role adminRole = roleRepository.findByRoleName("ROLE_ADMIN");
@@ -56,33 +63,31 @@ public class InitialDataLoader
             user.setUsername("admin");
             user.setPassword("{noop}admin");
             user.setEmail("test@test.com");
-            user.setRoles(Arrays.asList(adminRole));
+            user.setRoles(Collections.singletonList(adminRole));
             user.setEnabled(true);
             userRepository.save(user);
         }
-        return u;
     }
 
     @Transactional
-    Privilege createPrivilegeIfNotFound(String name, String description) {
+    Privilege createPrivilegeIfNotFound() {
 
-        Privilege privilege = privilegeRepository.findByName(name);
+        Privilege privilege = privilegeRepository.findByName("ADMIN");
         if (privilege == null) {
-            privilege = new Privilege(name, description);
+            privilege = new Privilege("ADMIN", "Can Do anything");
             privilegeRepository.save(privilege);
         }
         return privilege;
     }
 
     @Transactional
-    Role createRoleIfNotFound(String name, List<Privilege> privileges) {
+    void createRoleIfNotFound(List<Privilege> privileges) {
 
-        Role role = roleRepository.findByRoleName(name);
+        Role role = roleRepository.findByRoleName("ROLE_ADMIN");
         if (role == null) {
-            role = new Role(name);
+            role = new Role("ROLE_ADMIN");
             role.setPrivileges(privileges);
             roleRepository.save(role);
         }
-        return role;
     }
 }
