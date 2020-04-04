@@ -20,26 +20,29 @@ public abstract class BaseController< T extends BaseModel, S extends GenericServ
     S genericService;
 
     public BaseController(PrivilegeService privilegeService, S genericService) {
-        String getPrivilege = OperationType.GET.name() + "_" + this.getClass().getSimpleName();
-        String postPrivilege = OperationType.ADD.name() + "_" + this.getClass().getSimpleName();
-        String updatePrivilege = OperationType.UPDATE.name() + "_" + this.getClass().getSimpleName();
-        String deletePrivilege = OperationType.DELETE.name() + "_" + this.getClass().getSimpleName();
+        String className = this.getClass().getSimpleName();
+        if (!className.equals("BaseController")) {
+            String getPrivilege = OperationType.GET.name() + "_" + className;
+            String postPrivilege = OperationType.ADD.name() + "_" + className;
+            String updatePrivilege = OperationType.UPDATE.name() + "_" + className;
+            String deletePrivilege = OperationType.DELETE.name() + "_" + className;
 
-        List<Privilege> privileges = new ArrayList<>();
+            List<Privilege> privileges = new ArrayList<>();
 
-        if (privilegeService.getBYName(getPrivilege) == null)
-            privileges.add(new Privilege(getPrivilege, "Get one or all"));
+            if (privilegeService.getBYName(getPrivilege) == null)
+                privileges.add(new Privilege(getPrivilege,"Get one or all"));
 
-        if (privilegeService.getBYName(getPrivilege) == null)
-            privileges.add(new Privilege(postPrivilege, "Insert Privilege"));
+            if (privilegeService.getBYName(getPrivilege) == null)
+                privileges.add(new Privilege(postPrivilege,"Insert Privilege"));
 
-        if (privilegeService.getBYName(getPrivilege) == null)
-            privileges.add(new Privilege(updatePrivilege, "Update Privilege"));
+            if (privilegeService.getBYName(getPrivilege) == null)
+                privileges.add(new Privilege(updatePrivilege,"Update Privilege"));
 
-        if (privilegeService.getBYName(getPrivilege) == null)
-            privileges.add(new Privilege(deletePrivilege, "Delete Privilege"));
+            if (privilegeService.getBYName(getPrivilege) == null)
+                privileges.add(new Privilege(deletePrivilege,"Delete Privilege"));
 
-        privilegeService.saveAll(privileges);
+            privilegeService.saveAll(privileges);
+        }
 
         this.genericService = genericService;
     }

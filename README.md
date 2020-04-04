@@ -45,11 +45,11 @@ GenericService contains the methods:
 ```java
 @RestController
 @RequestMapping("path")
-public class MyController extends BaseController {
+public class MyController extends BaseController<MyEntity, MyService> {
     PrivilegeService privilegeService;
 
     @Autowired
-    public Test(PrivilegeService privilegeService) {
+    public Test(PrivilegeService privilegeService, MyService myService) {
         super(privilegeService);
     }
 }
@@ -66,7 +66,7 @@ then you can use AuthorityHelper class for authorization.
 in any method in controller you can use the three method:
 1. `AuthorityHelper.hasAuthority(UserDetails user, String className, OperationType operationType)`
 2. `AuthorityHelper.hasAuthority(UserDetails user, String privilege)`
-3. `AuthorityHelper.hasAuthority(List<GrantedAuthority> authorities, String privilege)`
+3. `AuthorityHelper.hasAuthority(List<GrantedAuthority> authorities, String className, OperationType operationType)`
 
 ### For further reference
 please consider the following sections:
